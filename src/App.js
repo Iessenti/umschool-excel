@@ -32,7 +32,10 @@ function App() {
 
   const fileUpload = async text => { // перевод из xlsx в массив ячеек
     const fetchStr = 'http://185.189.167.8/umschool-excel/src/files/УМТИПЫ_'+text+'.xlsx'
-    var file = await fetch(fetchStr) // запрос
+    await fetch(fetchStr).then( response => {
+     console.log('okey')
+      console.log(response)
+    }) // запрос
     console.log(file)
     console.log('loaded')
     const reader = new FileReader();
