@@ -163,6 +163,7 @@ function App() {
                 subjectArray.map(elem => (
                   <div className='collapse-opened-elem' 
                     onClick={() => {
+                      console.log(elem)
                       fileUpload(elem) // при клике на нужный предмет,загружается этот файл
                       setCollapseOpened({subject: false, title: false}) // также закрывается этот коллапс
                       setCurrentValues({subject: elem, title: 'Выберите тему'}) // и записывается название предмета
