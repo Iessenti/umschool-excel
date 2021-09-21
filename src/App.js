@@ -31,7 +31,7 @@ function App() {
   const [checkedList, setCheckedList] = useState([])
 
   const fileUpload = async text => { // перевод из xlsx в массив ячеек
-    const fetchStr = 'http://185.189.167.8/files/УМТИПЫ_'+'.xlsx'
+    const fetchStr = 'http://185.189.167.8/umschool-excel/files/УМТИПЫ_'+'.xlsx'
     var file = await fetch(fetchStr) // запрос
     const reader = new FileReader();
 
