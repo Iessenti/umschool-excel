@@ -31,14 +31,17 @@ function App() {
   const [checkedList, setCheckedList] = useState([])
 
   const fileUpload = async text => { // перевод из xlsx в массив ячеек
-    const fetchStr = 'http://185.189.167.8/umschool-excel/src/files/УМТИПЫ_'+text+'.xlsx'
-    await fetch(fetchStr).then( response => {
-     console.log('okey')
-      console.log(response)
-    }) // запрос
-    console.log(file)
-    console.log('loaded')
-    const reader = new FileReader();
+    const fetchStr = 'http://185.189.167.8/umschool-excel/files/УМТИПЫ_'+text+'.xlsx'
+    axios({
+        url: fetchStr,
+        method: 'GET',
+        headers: { 'Accept': 'application/vnd.ms-excel' },
+        responseType: 'blob'
+    }).then( response => {
+        console.log(response.data)
+        console.log( new Blob([response.data]) )
+        const file = new Blob([response.data])
+            const reader = new FileReader();
 
     reader.onload = (evt) => { 
       const bstr = evt.target.result;
@@ -66,6 +69,14 @@ function App() {
       setData(arrayDraft)
     };
     reader.readAsBinaryString(file);
+    })
+//     await fetch(fetchStr).then( response => {
+//      console.log('okey')
+//       console.log(response)
+//     }) // запрос
+//     console.log(file)
+//     console.log('loaded')
+
   }
 
   const toggleCollapseOpened = (name) => { // проверяем открыт ли коллапс
