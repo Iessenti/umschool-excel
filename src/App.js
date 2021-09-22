@@ -7,7 +7,7 @@ import Logo from './logo.png'
 
 const alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
-const subjectArray = ["Математика", "Русский", "Физика", "Обществознание", "Иностранный язык", "Литература", "История"]
+const subjectArray = ["Математика", "Русский", "Физика", "Обществознание", "Литература", "История", "Немецкий", "Английский", "Химия", "Биология"]
 
 function App() {
 
@@ -32,7 +32,7 @@ function App() {
   const [checkedList, setCheckedList] = useState([])
 
   const fileUpload = async (text) => { // перевод из xlsx в массив ячеек
-    const fetchStr = 'http://185.189.167.8/root/umschool-excel/files/УМТИПЫ_'+text+'.xlsx'
+    const fetchStr = 'http://185.189.167.8/files/УМТИПЫ_'+text+'.xlsx'
     console.log(fetchStr)
     axios({
         url: fetchStr,
