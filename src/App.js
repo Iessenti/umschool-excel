@@ -31,8 +31,9 @@ function App() {
   const [finalText, setFinalText] = useState('')
   const [checkedList, setCheckedList] = useState([])
 
-  const fileUpload = async text => { // перевод из xlsx в массив ячеек
-    const fetchStr = 'http://185.189.167.8/umschool-excel/files/УМТИПЫ_'+text+'.xlsx'
+  const fileUpload = async (text) => { // перевод из xlsx в массив ячеек
+    const fetchStr = 'http://185.189.167.8/root/umschool-excel/files/УМТИПЫ_'+text+'.xlsx'
+    console.log(fetchStr)
     axios({
         url: fetchStr,
         method: 'GET',
@@ -178,7 +179,6 @@ function App() {
                 subjectArray.map(elem => (
                   <div className='collapse-opened-elem' 
                     onClick={() => {
-                      console.log(elem)
                       fileUpload(elem) // при клике на нужный предмет,загружается этот файл
                       setCollapseOpened({subject: false, title: false}) // также закрывается этот коллапс
                       setCurrentValues({subject: elem, title: 'Выберите тему'}) // и записывается название предмета
