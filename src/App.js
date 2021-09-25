@@ -285,7 +285,11 @@ function App() {
             {
               (finalText !== '') 
               ?
-              <div className='display'>{checkedIdList}</div>
+              <div className='display'>
+                {checkedIdList.map( e => (
+                  <span>{e}, </span>
+                ))}
+              </div>
               : 
               <div className='none-display'>Здесь будут ID...</div>
             }
