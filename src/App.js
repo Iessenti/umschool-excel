@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import axios from 'axios'
 import * as XLSX from "xlsx";
+import axios from 'axios'
 import { SearchIcon, ShowMoreIcon } from './styles/icons';
 import './styles/App.css'
 import Logo from './logo.png'
@@ -25,15 +25,16 @@ function App() {
 
   const [titles, setTitles] = useState([])
 
-  const [currentUmtypes, setCurrentUmtypes] = useState(false) 
+  const [currentUmtypes, setCurrentUmtypes] = useState(false)
   const [searchData, setSearchData] = useState([])
   const [searchValue, setSearchValue] = useState('')
   const [finalText, setFinalText] = useState('')
   const [checkedList, setCheckedList] = useState([])
+  const [checkedIdList, setCheckedIdList] = useState([])
 
-  const fileUpload = async (text) => { // перевод из xlsx в массив ячеек
-    const fetchStr = 'http://185.189.167.8/files/УМТИПЫ_'+text+'.xlsx'
-    console.log(fetchStr)
+
+  const fileUpload = str => { // перевод из xlsx в массив ячеек
+    const fetchStr = 'http://185.189.167.8/files/УМИТЫ_'+str+'.xlsx'
     axios({
         url: fetchStr,
         method: 'GET',
@@ -43,45 +44,43 @@ function App() {
         console.log(response.data)
         console.log( new Blob([response.data]) )
         const file = new Blob([response.data])
-            const reader = new FileReader();
+        const reader = new FileReader();
+    
+        reader.onload = (evt) => {
+          const bstr = evt.target.result;
+          const wb = XLSX.read(bstr, { type: "binary" });
+          const worksheetname = wb.SheetNames[0];
+          const worksheet = wb.Sheets[worksheetname];
 
-    reader.onload = (evt) => { 
-      const bstr = evt.target.result;
-      const wb = XLSX.read(bstr, { type: "binary" });
-      const worksheetname = wb.SheetNames[0];
-      const worksheet = wb.Sheets[worksheetname]; // парсинг excel-файла
-      
-      let arrayOfTitles = [] // массив заголовков. Ниже - объект массивов значений по колонкам 
-      const arrayDraft = {'A': [], 'B': [], 'C': [], 'D': [], 'E': [], 'F': [], 'G': [], 'H': [], 'I': [], 'J': [], 'K': [], 'L': [], 'M': [], 'N': [], 'O': [], 'P': [], 'Q': [], 'R': [], 'S': [], 'T': [], 'U': [], 'V': [], 'W': [], 'X': [], 'Y': [], 'Z': []}
-      
-      Object.keys(worksheet).forEach( elem => { // перебор всех ячеек
-        let letter = worksheet[elem]
+          let arrayOfTitles = []
+          const arrayDraft = {'A': [], 'B': [], 'C': [], 'D': [], 'E': [], 'F': [], 'G': [], 'H': [], 'I': [], 'J': [], 'K': [], 'L': [], 'M': [], 'N': [], 'O': [], 'P': [], 'Q': [], 'R': [], 'S': [], 'T': [], 'U': [], 'V': [], 'W': [], 'X': [], 'Y': [], 'Z': []}
+          
+          
+          let mainKeys = ['A', 'C', 'E', 'G', 'I', 'K', 'M', 'O', 'Q', 'S', 'U', 'W', 'Y']
+          let secondKeys = ['B', 'D', 'F', 'H', 'J', 'L', 'N', 'P', 'R', 'T', 'V', 'X', 'Z']
 
-        if ((elem.length == 2) && elem[1] == '1') { // если название ячейки вида "буква - 1", тогда это заголовок
-
-          arrayOfTitles.push({title: letter.h, letter: elem[0]}) // добавляем заголовок
-
-        } else if (arrayDraft[elem[0]] !== undefined) { // если же нет
-          let index = elem[0]
-          arrayDraft[index].push(letter.h) // тогда добавляем значение ячейки в массив с нужной литерой
-        }
-      })
-      
-      setTitles(arrayOfTitles)
-      setData(arrayDraft)
-    };
-    reader.readAsBinaryString(file);
+          Object.keys(worksheet).forEach( elem => {
+            let letter = worksheet[elem]
+            
+            if ( (elem.length == 2) && (elem[1] == '1') && ( secondKeys.indexOf(elem[0]) == -1 ) ) {
+              arrayOfTitles.push({title: letter.h, letter: elem[0]})
+            } else if ( (arrayDraft[elem[0]] !== undefined) && ( mainKeys.indexOf(elem[0]) !== -1 ) )  {
+              
+              let index = elem[0]
+              
+              arrayDraft[index].push(worksheet[ secondKeys[ mainKeys.indexOf(index) ] + elem.slice(1) ].w + '#' + letter.h )
+            }
+          })
+          
+          setTitles(arrayOfTitles)
+          setData(arrayDraft)
+        };
+        reader.readAsBinaryString(file);
     })
-//     await fetch(fetchStr).then( response => {
-//      console.log('okey')
-//       console.log(response)
-//     }) // запрос
-//     console.log(file)
-//     console.log('loaded')
-
   }
 
-  const toggleCollapseOpened = (name) => { // проверяем открыт ли коллапс
+
+  const toggleCollapseOpened = (name) => {
     if (collapseOpened[name]) {
       setCollapseOpened({[name]: false})
     } else {
@@ -89,22 +88,22 @@ function App() {
     }
   }
 
-  const changeSearch = (text) => { // поиск
+  const changeSearch = (text) => {
 
-    if ( (currentUmtypes) && (currentUmtypes.length !== 0) && (typeof text ==='string') && (text.length >= 3)) { // необходимая проверка соотвествия всех значений
+    if ( (currentUmtypes) && (currentUmtypes.length !== 0) && (typeof text ==='string') && (text.length >= 3)) {
       
       let newData = []
       currentUmtypes.forEach( elem => {
 
         if ((typeof elem == 'string') && (elem.toLowerCase().includes(text))) {
           newData.push(
-            { // код ниже отвечает за вставку в элемент background оранжевого цвета
+            { 
               html: <>
-                { elem.slice(0, elem.toLowerCase().indexOf(text.toLowerCase())) }
+                { elem.slice( elem.indexOf('#')+1, elem.toLowerCase().indexOf(text.toLowerCase())) }
                 <span style={{background: '#F19137'}}>{text}</span>
                 { elem.slice( elem.toLowerCase().indexOf(text.toLowerCase())+text.length )}
                 </>,
-              text: elem // однако всё равно нужно передавать просто строку
+              text: elem
             }
           )
         } 
@@ -113,56 +112,66 @@ function App() {
       setSearchData( newData )
 
     } else {
-      setSearchData(currentUmtypes) // необходимо для тех случаев, когда строка в поиске стирается и становится меньше 3
+      setSearchData(currentUmtypes)
     }
 
     setSearchValue(text)
 
   }
 
-  const changeCheckbox = (text) => { // вызывается при выборе умтипа
+  const changeCheckbox = (t) => {
+    const id = t.slice(0, t.indexOf('#') )
+    console.log(id)
 
-    if ( checkedList.includes(text) ) { // проверка того, выбран ли этот умтип 
+    const text = t.slice( t.indexOf('#') + 1)
+
+    if ( checkedList.includes(text) ) {
       
-      if ( checkedList.indexOf(text) === 0 ) { // это условие нужно для правильного отображения строки
-        setFinalText( finalText.slice( text.length+2 ) ) // учтём условие, что убираемый элемент первый
-      } else if (checkedList.indexOf(text) === checkedList.length-1) { // учтём условие, что убираемый элемент последний
+      if ( checkedList.indexOf(text) === 0 ) {
+        setFinalText( finalText.slice( text.length+2 ) )
+      } else if (checkedList.indexOf(text) === checkedList.length-1) {
         setFinalText( finalText.slice(0, finalText.indexOf(text)-2 ) + finalText.slice( finalText.indexOf(text)+text.length+2 ) )
-      } else { // условие, что убираемый текст в середине
+      } else {
         setFinalText( finalText.slice(0, finalText.indexOf(text)-2 ) + finalText.slice( finalText.indexOf(text)+text.length ) )
       }
 
-      let newArray = checkedList // вообще, checkedList нужен для отображения галочек у выбранных умтипов
-      newArray.splice( checkedList.indexOf(text) , 1) // убираем умтип
-      
+      let newArray = checkedList
+      newArray.splice( checkedList.indexOf(text) , 1) 
       setCheckedList( newArray )
-      
-    } else { // добавляем умтип
 
-      if (finalText !== '') { // если это не первый умтип, тогда с запятой
+      let idNewArray = checkedIdList
+      idNewArray.splice( checkedIdList.indexOf(id) )
+      setCheckedIdList(idNewArray)
+      
+    } else {
+
+      if (finalText !== '') {
         setFinalText( finalText + ', ' + text)
       } else {
-        setFinalText(text) // если первый, тогда пока без запятой
+        setFinalText(text)
       }
+      
       setCheckedList([...checkedList, text])
-
+      setCheckedIdList([...checkedIdList, id  + ' '])
     }
 
   }
 
+
   return (
     <div>
-            {/* <form enctype="multipart/form-data" style={{position: 'absolute', top: '0', right: '120px'}}>
-          <input id="upload" type='file'  name="files[]" onChange={ e => fileUploaded(e) }/>
+{/* 
+      <form encType="multipart/form-data" style={{position: 'absolute', top: '0', right: '120px'}}>
+         <input id="upload" type='file'  name="files[]" onChange={ e => fileUploaded(e.target.files[0]) }/>
       </form> */}
 
-    <img src={Logo} alt='logo' id='logo' /> 
+    <img src={Logo} alt='logo' id='logo' />
     <div className='app'>
 
 
-      <div className='panel-wrapper'> 
+      <div className='panel-wrapper'>
         <div className='row'>
-          {/* первый коллапс */}
+
           <div className={`collapse subject bordered ${ collapseOpened.subject ? 'openedPanel' : '' }`} onClick={() => toggleCollapseOpened('subject')}>
               <span>
                 {
@@ -171,7 +180,7 @@ function App() {
               </span>
               <div className={`arrow-svg ${ collapseOpened.subject ? 'rotated' : '' }`}><ShowMoreIcon /></div>
           </div>
-          {/* открывающаяся часть первого коллапса */}
+
           <div className={`collapse-list ${ collapseOpened.subject ? 'opened opened-list-subjects' : '' }`}>
               {
                 collapseOpened.subject 
@@ -179,9 +188,9 @@ function App() {
                 subjectArray.map(elem => (
                   <div className='collapse-opened-elem' 
                     onClick={() => {
-                      fileUpload(elem) // при клике на нужный предмет,загружается этот файл
-                      setCollapseOpened({subject: false, title: false}) // также закрывается этот коллапс
-                      setCurrentValues({subject: elem, title: 'Выберите тему'}) // и записывается название предмета
+                      fileUpload(elem)
+                      setCollapseOpened({subject: false, title: false})
+                      setCurrentValues({subject: elem, title: 'Выберите тему'})
                     }}
                   >
                     {elem}
@@ -190,7 +199,6 @@ function App() {
               }
           </div>
 
-          {/* второй коллапса */}
           <div className={`collapse title bordered ${ collapseOpened.title ? 'openedPanel' : '' }`} onClick={() => toggleCollapseOpened('title')}>
               <span>
                 {
@@ -200,7 +208,7 @@ function App() {
               <div className={`arrow-svg ${ collapseOpened.title ? 'rotated' : '' }`}><ShowMoreIcon /></div>
           </div>
         </div>
-        {/* открывающаяся часть второго коллапса */}
+
         <div className={`collapse-list title-collapse ${ collapseOpened.title && (currentValues.subject !== 'Выберите предмет')  ? 'opened opened-list-titles' : '' }`}>
               {
                 collapseOpened.title 
@@ -210,11 +218,11 @@ function App() {
                 titles.map(elem => (
                   <div className='collapse-opened-elem' 
                     onClick={() => {
-                      setCollapseOpened({subject: false, title: false}) // закрываем оба коллапса при выборе темы
-                      setCurrentValues({...currentValues, title: elem.title}) // записываем выбранную тему
-                      setCurrentUmtypes( data[elem.letter] ) // текущий список умтипов
-                      setSearchValue('') // очищаем строку поиска
-                      setSearchData( data[elem.letter] ) // отображаем список умтипов
+                      setCollapseOpened({subject: false, title: false})
+                      setCurrentValues({...currentValues, title: elem.title})
+                      setCurrentUmtypes( data[elem.letter] )
+                      setSearchValue('')
+                      setSearchData( data[elem.letter] )
                     }}
                   >
                     {elem.title}
@@ -223,43 +231,40 @@ function App() {
               }
           </div>
         
-        {/* поиск обыкновенный */}
         <div className='search-wrapper bordered'>
               <input type='text' placeholder='ПОИСК...' onChange={ e => changeSearch(e.target.value)} value={searchValue}/>
               <SearchIcon />
         </div>
 
-        {/* дисплей умтипов */}
         <div className='umtypes-display bordered'>
           {
             searchData.length > 0
             ?
             searchData.map( elem => {
-              if (typeof elem !== 'string') {             // условие необходимо для распознавания массмв объектов или строк
-                return (                                  // здесь объект тогда, когда отображаем умтипы в зависимости от поиска
-                  <div className='umtype-element' >       
-                    <input type='checkbox' checked={ checkedList.includes(elem.text) } onChange={ () => changeCheckbox(elem.text) }/>
+              if (typeof elem !== 'string') {
+                return (
+                  <div className='umtype-element' >
+                    <input type='checkbox' checked={ checkedList.includes(elem.text.slice( elem.text.indexOf('#') + 1 ))  } onChange={ () => changeCheckbox(elem.text) }/>
                     <span>{elem.html}</span>
                   </div>
                 )
               } else {
                 return (
                   <div className='umtype-element' >
-                    <input type='checkbox' checked={ checkedList.includes(elem) } onChange={ () => changeCheckbox(elem) }/>
-                    <span>{elem}</span>
+                    <input type='checkbox' checked={ checkedList.includes(elem.slice( elem.indexOf('#') + 1 )) } onChange={ () => changeCheckbox(elem) }/>
+                    <span>{elem.slice( elem.indexOf('#')+1 )}</span>
                   </div>
                 )
               }
 
             })
             :
-            <div className='none-display'>Пожалуйста, выберите предмет и тему</div> // если пока не выбраны предмет и темы
+            <div className='none-display'>Пожалуйста, выберите предмет и тему</div>
           }
         </div>
 
       </div>
-        
-      {/* отображение строк, всё оень просто */}
+
       <div className='display-wrapper bordered'>
           {
             (finalText !== '') 
@@ -269,12 +274,20 @@ function App() {
             <div className='none-display'>Здесь будет текст...</div>
           }
 
+
+          <div>
+                  {
+                    checkedIdList
+                  }
+          </div>
           
           <div className='display-panel'>
             <div className='copy button' onClick={ () => { navigator.clipboard.writeText(finalText) } }>Копировать</div>
             <div className='clear button' onClick={ () => { setCheckedList([]); setFinalText('') }}>Очистить</div>
           </div>
       </div>
+
+
     </div>
     </div>
   )
