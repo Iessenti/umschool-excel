@@ -34,7 +34,7 @@ function App() {
 
 
   const fileUpload = str => { // перевод из xlsx в массив ячеек
-    const fetchStr = 'http://130.61.54.232/files/УМИТЫ_'+str+'.xlsx'
+    const fetchStr = 'http://130.61.54.232/var/files/УМИТЫ_'+str+'.xlsx'
     axios({
         url: fetchStr,
         method: 'GET',
