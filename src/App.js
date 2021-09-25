@@ -34,7 +34,7 @@ function App() {
 
 
   const fileUpload = str => { // перевод из xlsx в массив ячеек
-    const fetchStr = 'http://130.61.54.232/var/www/umschool-excel/files/УМИТЫ_'+str+'.xlsx'
+    const fetchStr = 'http://130.61.54.232/files/УМИТЫ_'+str+'.xlsx'
     axios({
         url: fetchStr,
         method: 'GET',
@@ -265,28 +265,37 @@ function App() {
 
       </div>
 
-      <div className='display-wrapper bordered'>
-          {
-            (finalText !== '') 
-            ?
-            <div className='display'>{finalText}</div>
-            : 
-            <div className='none-display'>Здесь будет текст...</div>
-          }
+      <div className='display-wrapper'>
+        <div className='display-text bordered'>
+            {
+              (finalText !== '') 
+              ?
+              <div className='display'>{finalText}</div>
+              : 
+              <div className='none-display'>Здесь будет текст...</div>
+            }
+            
+            <div className='display-panel'>
+              <div className='copy button' onClick={ () => { navigator.clipboard.writeText(finalText) } }>Копировать</div>
+              <div className='clear button' onClick={ () => { setCheckedList([]); setFinalText('') }}>Очистить</div>
+            </div>
+        </div>
 
+        <div className='display-id bordered'>
+            {
+              (finalText !== '') 
+              ?
+              <div className='display'>{checkedIdList}</div>
+              : 
+              <div className='none-display'>Здесь будут ID...</div>
+            }
 
-          <div>
-                  {
-                    checkedIdList
-                  }
-          </div>
-          
-          <div className='display-panel'>
-            <div className='copy button' onClick={ () => { navigator.clipboard.writeText(finalText) } }>Копировать</div>
-            <div className='clear button' onClick={ () => { setCheckedList([]); setFinalText('') }}>Очистить</div>
-          </div>
+            <div className='display-panel'>
+              <div className='copy button' onClick={ () => { navigator.clipboard.writeText(checkedIdList) } }>Копировать</div>
+              {/* <div className='clear button' onClick={ () => { setCheckedIdList('') }}>Очистить</div> */}
+            </div>
+        </div>
       </div>
-
 
     </div>
     </div>
