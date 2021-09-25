@@ -7,7 +7,7 @@ import Logo from './logo.png'
 
 const alphabet = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X', 'Y', 'Z']
 
-const subjectArray = ["Математика", "Русский", "Физика", "Обществознание", "Литература", "История", "Немецкий", "Английский", "Химия", "Биология"]
+const subjectArray = ["Математика", "Русский", "Физика", "Обществознание", "Литература", "История", "Немецкий", "Английский", "Химия", "Биология", "География", "Информатика"]
 
 function App() {
 
@@ -34,7 +34,7 @@ function App() {
 
 
   const fileUpload = str => { // перевод из xlsx в массив ячеек
-    const fetchStr = 'http://185.189.167.8/files/УМИТЫ_'+str+'.xlsx'
+    const fetchStr = 'http://130.61.54.232/files/УМИТЫ_'+str+'.xlsx'
     axios({
         url: fetchStr,
         method: 'GET',
