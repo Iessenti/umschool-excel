@@ -11,7 +11,7 @@ const subjectArray = ["Математика", "Русский", "Физика", 
 
 function App() {
 
-  const [data, setData] = useState(false)
+  const [data, setData] = useState([])
 
   const [currentValues, setCurrentValues] = useState({
     subject: "Выберите предмет",
@@ -88,27 +88,30 @@ function App() {
     }
   }
 
-  const changeSearch = (text) => {
-
+  const changeSearch = (t) => {
+    let text = t.toLowerCase()
     if ( (currentUmtypes) && (currentUmtypes.length !== 0) && (typeof text ==='string') && (text.length >= 3)) {
       
       let newData = []
-      currentUmtypes.forEach( elem => {
-
-        if ((typeof elem == 'string') && (elem.toLowerCase().includes(text))) {
-          newData.push(
-            { 
-              html: <>
-                { elem.slice( elem.indexOf('#')+1, elem.toLowerCase().indexOf(text.toLowerCase())) }
-                <span style={{background: '#F19137'}}>{text}</span>
-                { elem.slice( elem.toLowerCase().indexOf(text.toLowerCase())+text.length )}
-                </>,
-              text: elem
-            }
-          )
-        } 
-      })
       
+      data.forEach( arr => {
+        arr.forEach( elem => {
+
+          if ((typeof elem == 'string') && (elem.toLowerCase().includes(text))) {
+            newData.push(
+              { 
+                html: <>
+                  { elem.slice( elem.indexOf('#')+1, elem.toLowerCase().indexOf(text.toLowerCase())) }
+                  <span style={{background: '#F19137'}}>{text}</span>
+                  { elem.slice( elem.toLowerCase().indexOf(text.toLowerCase())+text.length )}
+                  </>,
+                text: elem
+              }
+            )
+          } 
+        })
+      })
+      setCurrentValues({...currentValues, title: 'Выберите тему'})
       setSearchData( newData )
 
     } else {
