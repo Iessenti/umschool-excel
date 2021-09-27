@@ -160,7 +160,11 @@ function App() {
 
   }
 
+  const copyText =(t) => {
 
+      navigator.clipboard.writeText(t)
+
+  }
   return (
     <div>
 {/* 
@@ -279,7 +283,7 @@ function App() {
             }
             
             <div className='display-panel'>
-              <div className='copy button' onClick={ () => { navigator.clipboard.writeText(finalText) } }>Копировать</div>
+              <div className='copy button' onClick={ () => copyText(finalText) }>Копировать</div>
               <div className='clear button' onClick={ () => { setCheckedList([]); setFinalText('') }}>Очистить</div>
             </div>
         </div>
@@ -298,7 +302,7 @@ function App() {
             }
 
             <div className='display-panel'>
-              <div className='copy button' onClick={ () => { navigator.clipboard.writeText(checkedIdList.toString()) } }>Копировать</div>
+              <div className='copy button' onClick={ () => copyText(checkedIdList.toString()) }>Копировать</div>
               {/* <div className='clear button' onClick={ () => { setCheckedIdList('') }}>Очистить</div> */}
             </div>
         </div>
