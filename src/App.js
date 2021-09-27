@@ -298,7 +298,7 @@ function App() {
             }
 
             <div className='display-panel'>
-              <div className='copy button' onClick={ () => { navigator.clipboard.writeText(checkedIdList) } }>Копировать</div>
+              <div className='copy button' onClick={ () => { navigator.clipboard.writeText(checkedIdList.toString()) } }>Копировать</div>
               {/* <div className='clear button' onClick={ () => { setCheckedIdList('') }}>Очистить</div> */}
             </div>
         </div>
