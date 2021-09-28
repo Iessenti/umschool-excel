@@ -68,7 +68,7 @@ function App() {
               
               let index = elem[0]
               
-              arrayDraft[index].push(worksheet[ secondKeys[ mainKeys.indexOf(index) ] + elem.slice(1) ].w + '#' + letter.h )
+              arrayDraft[index].push(worksheet[ secondKeys[ mainKeys.indexOf(index) ] + elem.slice(1) ].w + '#' + letter.w )
             }
           })
           
@@ -281,11 +281,6 @@ function App() {
               : 
               <div className='none-display'>Здесь будет текст...</div>
             }
-            
-            <div className='display-panel'>
-              <div className='copy button' onClick={ () => copyText(finalText) }>Копировать</div>
-              <div className='clear button' onClick={ () => { setCheckedList([]); setFinalText('') }}>Очистить</div>
-            </div>
         </div>
 
         <div className='display-id bordered'>
@@ -300,12 +295,8 @@ function App() {
               : 
               <div className='none-display'>Здесь будут ID...</div>
             }
-
-            <div className='display-panel'>
-              <div className='copy button' onClick={ () => copyText(checkedIdList.toString()) }>Копировать</div>
-              {/* <div className='clear button' onClick={ () => { setCheckedIdList('') }}>Очистить</div> */}
-            </div>
         </div>
+        <div className='clear button' onClick={ () => { setCheckedList([]); setFinalText(''); setCheckedIdList([]) }}>Очистить</div>
       </div>
 
     </div>
