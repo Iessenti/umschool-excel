@@ -265,20 +265,13 @@ input {
     color: white;
     border-radius: 16px;
     transition: all .4s ease-in-out;
-}
-
-.copy {
-    background-color: #F19137; 
-}
-
-.copy:hover {
-    background-color: #f8902e;
+    margin-top: 8px;
 }
 
 .clear {
-    background-color: #341A11;
+    background-color: #F19137; 
 }
 
 .clear:hover {
-    background-color: #291711;
+    background-color: #f8902e;
 }
