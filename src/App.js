@@ -90,12 +90,13 @@ function App() {
 
   const changeSearch = (t) => {
     let text = t.toLowerCase()
-    if ( (currentUmtypes) && (currentUmtypes.length !== 0) && (typeof text ==='string') && (text.length >= 3)) {
+    if ( (currentUmtypes) && (currentUmtypes.length !== 0) && (typeof text ==='string') && (text.length >= 2)) {
       
       let newData = []
-      
-      data.forEach( arr => {
-        arr.forEach( elem => {
+      console.log(data)
+      Object.keys(data).forEach( id => {
+        
+        data[id].forEach( elem => {
 
           if ((typeof elem == 'string') && (elem.toLowerCase().includes(text))) {
             newData.push(
@@ -160,11 +161,6 @@ function App() {
 
   }
 
-  const copyText =(t) => {
-
-      navigator.clipboard.writeText(t)
-
-  }
   return (
     <div>
 {/* 
