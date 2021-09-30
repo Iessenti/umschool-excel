@@ -96,21 +96,23 @@ function App() {
       console.log(data)
       Object.keys(data).forEach( id => {
         
-        data[id].forEach( elem => {
+        if (data[id] && (data[id].length > 0) ) {
+          data[id].forEach( elem => {
 
-          if ((typeof elem == 'string') && (elem.toLowerCase().includes(text))) {
-            newData.push(
-              { 
-                html: <>
-                  { elem.slice( elem.indexOf('#')+1, elem.toLowerCase().indexOf(text.toLowerCase())) }
-                  <span style={{background: '#F19137'}}>{text}</span>
-                  { elem.slice( elem.toLowerCase().indexOf(text.toLowerCase())+text.length )}
-                  </>,
-                text: elem
-              }
-            )
-          } 
-        })
+            if ((typeof elem == 'string') && (elem.toLowerCase().includes(text))) {
+              newData.push(
+                { 
+                  html: <>
+                    { elem.slice( elem.indexOf('#')+1, elem.toLowerCase().indexOf(text.toLowerCase())) }
+                    <span style={{background: '#F19137'}}>{text}</span>
+                    { elem.slice( elem.toLowerCase().indexOf(text.toLowerCase())+text.length )}
+                    </>,
+                  text: elem
+                }
+              )
+            } 
+          })
+        }
       })
       setCurrentValues({...currentValues, title: 'Выберите тему'})
       setSearchData( newData )
